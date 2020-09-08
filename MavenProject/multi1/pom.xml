@@ -44,6 +44,15 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- Updating Maven complining to point jdk1.8 instead of 1.5 which is failed -->
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.5.1</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
         </plugins>
     </build>
 
@@ -80,7 +89,8 @@
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <classifier>jdk18</classifier>
+            <classifier>jdk15</classifier>
+            <version>5.9</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
