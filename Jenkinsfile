@@ -11,7 +11,12 @@ pipeline {
         stage('build'){
             steps {
                 echo "building the project"
-                sh "cd MavenProject ; mvn clean install ; pwd"
+                dir('MavenProject') {
+                    bat '''set M2_HOME=C:\\Program Files\\apache-maven-3.6.3
+                    set path=C:\\Program Files\\apache-maven-3.6.3\\bin;%path%,
+                    mvn clean install'''
+                }
+                
             }
         }
         
@@ -27,7 +32,7 @@ pipeline {
             steps {
                 script {
                     echo "deployment"
-                    sh 'cp MavenProject/multi3/target/*.war /Applications/apache-tomcat-7.0.88/webapps/'
+                    bat 'cp MavenProject/multi3/target/*.war /Applications/apache-tomcat-7.0.88/webapps/'
                 }
             }
         }
@@ -49,14 +54,15 @@ pipeline {
             {
               node('window'){
                 git 'https://github.com/vathsalahn/jenkins-demo.git'
-                sh "cd javancss-master ; mvn test javancss:report ; pwd"
-                  }
+                bat 'cd javancss-master'
+                bat 'mvn test javancss:report'
+                }
             },
             "FindBugs Report" : {
             node('window'){
-                sh "mkdir javancss1 ; cd javancss1 ;pwd"
+                bat 'mkdir javancss1 ; cd javancss1 ;pwd'
                 git 'https://github.com/vathsalahn/jenkins-demo.git'
-                sh "cd javancss-master ; mvn findbugs:findbugs ; pwd"
+                bat 'cd javancss-master ; mvn findbugs:findbugs ; pwd'
                 deleteDir()
                 }
 
@@ -65,7 +71,7 @@ pipeline {
             }
          post{
                 success {
-                    emailext body: 'Successfully completed pipeline project with archiving the artifacts', subject: 'Pipeline was successfull', to: 'vathsala.hn22@gmail.com'
+                    emailext body: 'Successfully completed pipeline project with archiving the artifacts', subject: 'Pipeline was successfull', to: $NOTIFICATION_EMAIL
                 }
     }
 }
